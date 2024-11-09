@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { auth } from '@/lib/firebase';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -30,55 +32,65 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-8 rounded-lg max-w-md w-full">
-        <h2 className="text-2xl font-bold mb-4">{isLogin ? 'ログイン' : '新規登録'}</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>{isLogin ? 'ログイン' : '新規登録'}</DialogTitle>
+        </DialogHeader>
+        
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium mb-1">
               メールアドレス
             </label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border rounded text-black"
               required
             />
           </div>
-          <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2">
+
+          <div>
+            <label className="block text-sm font-medium mb-1">
               パスワード
             </label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border rounded text-black"
               required
             />
           </div>
-          {error && <p className="text-red-500 mb-4">{error}</p>}
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
-          >
+
+          {error && (
+            <p className="text-red-500 text-sm">{error}</p>
+          )}
+
+          <Button type="submit" className="w-full">
             {isLogin ? 'ログイン' : '登録'}
+          </Button>
+
+          <button
+            type="button"
+            onClick={() => setIsLogin(!isLogin)}
+            className="mt-4 text-blue-500 hover:underline w-full"
+          >
+            {isLogin ? '新規登録はこちら' : 'ログインはこちら'}
           </button>
+
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onClose}
+            className="w-full"
+          >
+            閉じる
+          </Button>
         </form>
-        <button
-          onClick={() => setIsLogin(!isLogin)}
-          className="mt-4 text-blue-500 hover:underline"
-        >
-          {isLogin ? '新規登録はこちら' : 'ログインはこちら'}
-        </button>
-        <button
-          onClick={onClose}
-          className="mt-4 ml-4 text-gray-500 hover:underline"
-        >
-          閉じる
-        </button>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
